@@ -8,6 +8,9 @@
       <Group guid="guidCopyCopilotReferenceCmdSet" id="cmdidCopyCopilotReferencesDocTabGroup" priority="0x0600">
         <Parent guid="guidSHLMainMenu" id="IDM_VS_CTXT_EZDOCWINTAB" />
       </Group>
+      <Group guid="guidCopyCopilotReferenceCmdSet" id="cmdidCopyCopilotReferencesEditorGroup" priority="0x0600">
+        <Parent guid="guidSHLMainMenu" id="IDM_VS_CTXT_CODEWIN" />
+      </Group>
     </Groups>
     <Buttons>
       <!-- Open document (file) tab context menu -->
@@ -25,6 +28,14 @@
           <ButtonText>Copy Copilot References (All Open Tabs)</ButtonText>
         </Strings>
       </Button>
+
+      <!-- Editor context menu: selected lines -->
+      <Button guid="guidCopyCopilotReferenceCmdSet" id="cmdidCopyCopilotReferencesSelectedLines" priority="0x0102" type="Button">
+        <Parent guid="guidCopyCopilotReferenceCmdSet" id="cmdidCopyCopilotReferencesEditorGroup" />
+        <Strings>
+          <ButtonText>Copy Copilot Reference (Selected Lines)</ButtonText>
+        </Strings>
+      </Button>
     </Buttons>
   </Commands>
 
@@ -33,7 +44,9 @@
     <GuidSymbol name="guidCopyCopilotReferenceCmdSet" value="{e5a7ccbd-56db-4f30-9c9f-01f7c52c1f6a}">
       <IDSymbol name="cmdidCopyCopilotReferences" value="0x0100" />
       <IDSymbol name="cmdidCopyCopilotReferencesAllOpenTabs" value="0x0101" />
+      <IDSymbol name="cmdidCopyCopilotReferencesSelectedLines" value="0x0102" />
       <IDSymbol name="cmdidCopyCopilotReferencesDocTabGroup" value="0x0201" />
+      <IDSymbol name="cmdidCopyCopilotReferencesEditorGroup" value="0x0202" />
     </GuidSymbol>
   </Symbols>
 </CommandTable>

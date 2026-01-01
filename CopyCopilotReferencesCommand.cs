@@ -2,6 +2,7 @@ using EnvDTE;
 using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
+using Microsoft.VisualStudio.TextManager.Interop;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.Design;
@@ -18,6 +19,7 @@ namespace CopyCopilotReference
     {
         public const int CommandId = 0x0100;
         public const int AllOpenTabsCommandId = 0x0101;
+        public const int SelectedLinesCommandId = 0x0102;
         public static readonly Guid CommandSet = new Guid("e5a7ccbd-56db-4f30-9c9f-01f7c52c1f6a");
 
         private readonly AsyncPackage package;
@@ -30,6 +32,7 @@ namespace CopyCopilotReference
 
             AddMenuCommand(commandService, CommandId, ExecuteSelected);
             AddMenuCommand(commandService, AllOpenTabsCommandId, ExecuteAllOpenTabs);
+            AddMenuCommand(commandService, SelectedLinesCommandId, ExecuteSelectedLines);
         }
 
         private void AddMenuCommand(OleMenuCommandService commandService, int commandId, EventHandler handler)
@@ -71,6 +74,14 @@ namespace CopyCopilotReference
                 paths = GetAllOpenDocumentPaths();
                 cmd.Text = "Copy Copilot References (All Open Tabs)";
             }
+            else if (cmd.CommandID.ID == SelectedLinesCommandId)
+            {
+                cmd.Text = "Copy Copilot Reference (Selected Lines)";
+                bool hasSelection = TryGetActiveDocumentFullPath() != null && TryGetSelectionLineRange(out _, out _);
+                cmd.Visible = hasSelection;
+                cmd.Enabled = hasSelection;
+                return;
+            }
             else
             {
                 paths = GetSelectedDocumentPaths();
@@ -111,6 +122,33 @@ namespace CopyCopilotReference
             Clipboard.SetText(text);
         }
 
+        private void ExecuteSelectedLines(object sender, EventArgs e)
+        {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
+            var fullPath = TryGetActiveDocumentFullPath();
+            if (string.IsNullOrWhiteSpace(fullPath))
+            {
+                return;
+            }
+
+            int startLine;
+            int endLine;
+            if (!TryGetSelectionLineRange(out startLine, out endLine))
+            {
+                return;
+            }
+
+            var lineStart = startLine + 1;
+            var lineEnd = endLine + 1;
+            string lineRange = lineStart == lineEnd
+                ? ":" + lineStart.ToString(CultureInfo.InvariantCulture)
+                : ":" + lineStart.ToString(CultureInfo.InvariantCulture) + "-" + lineEnd.ToString(CultureInfo.InvariantCulture);
+
+            var text = "#file:'" + fullPath + "'" + lineRange + " ";
+            Clipboard.SetText(text);
+        }
+
         private List<string> GetSelectedDocumentPaths()
         {
             ThreadHelper.ThrowIfNotOnUIThread();
@@ -147,6 +185,75 @@ namespace CopyCopilotReference
                 .Where(Path.IsPathRooted)
                 .Distinct(StringComparer.OrdinalIgnoreCase)
                 .ToList();
+        }
+
+        private static string TryGetActiveDocumentFullPath()
+        {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
+            try
+            {
+                var dte = Package.GetGlobalService(typeof(DTE)) as DTE;
+                var fullName = dte != null && dte.ActiveDocument != null ? dte.ActiveDocument.FullName : null;
+                return string.IsNullOrWhiteSpace(fullName) ? null : fullName;
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
+        private static bool TryGetSelectionLineRange(out int startLine, out int endLine)
+        {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
+            startLine = 0;
+            endLine = 0;
+
+            var textManager = Package.GetGlobalService(typeof(SVsTextManager)) as IVsTextManager;
+            if (textManager == null)
+            {
+                return false;
+            }
+
+            IVsTextView textView;
+            if (!ErrorHandler.Succeeded(textManager.GetActiveView(1, null, out textView)) || textView == null)
+            {
+                return false;
+            }
+
+            int sLine;
+            int sCol;
+            int eLine;
+            int eCol;
+            if (!ErrorHandler.Succeeded(textView.GetSelection(out sLine, out sCol, out eLine, out eCol)))
+            {
+                return false;
+            }
+
+            if (eLine < sLine || (eLine == sLine && eCol < sCol))
+            {
+                var tmpLine = sLine;
+                var tmpCol = sCol;
+                sLine = eLine;
+                sCol = eCol;
+                eLine = tmpLine;
+                eCol = tmpCol;
+            }
+
+            if (sLine == eLine && sCol == eCol)
+            {
+                return false;
+            }
+
+            if (eCol == 0 && eLine > sLine)
+            {
+                eLine--;
+            }
+
+            startLine = sLine;
+            endLine = eLine;
+            return true;
         }
 
         private List<string> GetAllOpenDocumentPaths()
