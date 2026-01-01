@@ -1,0 +1,29 @@
+# Build outputs
+bin/
+obj/
+
+# VS cache/settings
+.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+*.cache
+*.vshost.*
+*.VC.db
+*.VC.VC.opendb
+
+# VSIX artifacts
+*.vsix
+*.pkgdef
+
+# OS
+.DS_Store
+Thumbs.db
+
+# NuGet
+packages/
+.nuget/
+
+# Logs
+*.log

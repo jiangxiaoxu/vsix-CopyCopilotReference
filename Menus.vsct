@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CommandTable xmlns="http://schemas.microsoft.com/VisualStudio/2005-10-18/CommandTable">
+  <Extern href="stdidcmd.h" />
+  <Extern href="vsshlids.h" />
+
+  <Commands package="guidCopyCopilotReferencePackage">
+    <Groups>
+      <Group guid="guidCopyCopilotReferenceCmdSet" id="cmdidCopyCopilotReferencesDocTabGroup" priority="0x0600">
+        <Parent guid="guidSHLMainMenu" id="IDM_VS_CTXT_EZDOCWINTAB" />
+      </Group>
+    </Groups>
+    <Buttons>
+      <!-- Open document (file) tab context menu -->
+      <Button guid="guidCopyCopilotReferenceCmdSet" id="cmdidCopyCopilotReferences" priority="0x0100" type="Button">
+        <Parent guid="guidCopyCopilotReferenceCmdSet" id="cmdidCopyCopilotReferencesDocTabGroup" />
+        <Strings>
+          <ButtonText>Copy Copilot References</ButtonText>
+        </Strings>
+      </Button>
+
+      <!-- Open document (file) tab context menu: all open tabs -->
+      <Button guid="guidCopyCopilotReferenceCmdSet" id="cmdidCopyCopilotReferencesAllOpenTabs" priority="0x0101" type="Button">
+        <Parent guid="guidCopyCopilotReferenceCmdSet" id="cmdidCopyCopilotReferencesDocTabGroup" />
+        <Strings>
+          <ButtonText>Copy Copilot References (All Open Tabs)</ButtonText>
+        </Strings>
+      </Button>
+    </Buttons>
+  </Commands>
+
+  <Symbols>
+    <GuidSymbol name="guidCopyCopilotReferencePackage" value="{ad2dbf3d-d559-4615-87d6-8bc182ddaf71}" />
+    <GuidSymbol name="guidCopyCopilotReferenceCmdSet" value="{e5a7ccbd-56db-4f30-9c9f-01f7c52c1f6a}">
+      <IDSymbol name="cmdidCopyCopilotReferences" value="0x0100" />
+      <IDSymbol name="cmdidCopyCopilotReferencesAllOpenTabs" value="0x0101" />
+      <IDSymbol name="cmdidCopyCopilotReferencesDocTabGroup" value="0x0201" />
+    </GuidSymbol>
+  </Symbols>
+</CommandTable>
