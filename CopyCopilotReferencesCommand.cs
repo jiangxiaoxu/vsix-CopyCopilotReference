@@ -21,7 +21,6 @@ namespace CopyCopilotReference
         public const int AllOpenTabsCommandId = 0x0101;
         public const int SelectedLinesCommandId = 0x0102;
         public static readonly Guid CommandSet = new Guid("e5a7ccbd-56db-4f30-9c9f-01f7c52c1f6a");
-
         private readonly AsyncPackage package;
 
         private CopyCopilotReferencesCommand(AsyncPackage package, OleMenuCommandService commandService)
@@ -118,7 +117,20 @@ namespace CopyCopilotReference
                 return;
             }
 
-            var text = string.Concat(paths.Select(p => "#file:'" + p + "' "));
+            var dialog = new TabSelectionDialog(paths);
+            var result = dialog.ShowDialog();
+            if (result != true)
+            {
+                return;
+            }
+
+            var selectedPaths = dialog.GetSelectedPaths();
+            if (selectedPaths.Count == 0)
+            {
+                return;
+            }
+
+            var text = string.Concat(selectedPaths.Select(p => "#file:'" + p + "' "));
             Clipboard.SetText(text);
         }
 
@@ -534,5 +546,6 @@ namespace CopyCopilotReference
                 return null;
             }
         }
+
     }
 }
