@@ -14,7 +14,7 @@ namespace CopyCopilotReference
 {
     public partial class TabSelectionDialog : DialogWindow, INotifyPropertyChanged
     {
-        private const int MaxVisibleItemCount = 10;
+        private const int MaxVisibleItemCount = 15;
         private const string CjkPaddingText = "\u6C49\u5B57";
         private const string CjkSingleCharText = "\u6C49";
 

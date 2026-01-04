@@ -7,7 +7,7 @@
                          xmlns:shell="clr-namespace:System.Windows.Shell;assembly=PresentationFramework"
                          Title="Copy Copilot References"
                          SizeToContent="WidthAndHeight"
-                         WindowStartupLocation="CenterOwner"
+                         WindowStartupLocation="CenterScreen"
                          WindowStyle="None"
                          AllowsTransparency="True"
                          Background="Transparent">
@@ -110,7 +110,7 @@
             <ListBox x:Name="ItemsList"
                      Grid.Row="1"
                      ItemsSource="{Binding Items}"
-                     MinHeight="{Binding ListHeight}"
+                     Height="{Binding ListHeight}"
                      Focusable="False"
                      Background="{DynamicResource {x:Static vsui:EnvironmentColors.ToolWindowBackgroundBrushKey}}"
                      BorderThickness="0"
