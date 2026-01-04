@@ -1,0 +1,14 @@
+{
+  "$schema": "http://json.schemastore.org/vsix-publish",
+  "categories": [
+    "coding"
+  ],
+  "identity": {
+    "internalName": "CopyCopilotReference"
+  },
+  "overview": "README.md",
+  "priceCategory": "free",
+  "publisher": "jiangxiaoxu",
+  "private": false,
+  "qna": true
+}

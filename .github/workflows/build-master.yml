@@ -1,0 +1,22 @@
+name: build-master
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: microsoft/setup-msbuild@v2
+      - uses: NuGet/setup-nuget@v2
+      - name: Restore
+        run: nuget restore CopyCopilotReference.csproj
+      - name: Build
+        run: msbuild CopyCopilotReference.csproj /p:Configuration=Release /p:Platform=AnyCPU
+      - name: Verify VSIX
+        run: |
+          $vsix = Get-ChildItem -Path bin\Release -Filter *.vsix -ErrorAction SilentlyContinue | Select-Object -First 1
+          if (-not $vsix) { throw "VSIX not found in bin\\Release" }
