@@ -26,6 +26,8 @@ namespace CopyCopilotReference
         private Brush foregroundBrush;
         private Brush highlightBrush;
         private Brush highlightTextBrush;
+        private Brush hoverBrush;
+        private Brush selectedHoverBrush;
 
         public TabSelectionDialog(IReadOnlyList<string> paths)
         {
@@ -143,6 +145,26 @@ namespace CopyCopilotReference
             }
         }
 
+        public Brush HoverBrush
+        {
+            get => hoverBrush;
+            private set
+            {
+                hoverBrush = value;
+                NotifyPropertyChanged(nameof(HoverBrush));
+            }
+        }
+
+        public Brush SelectedHoverBrush
+        {
+            get => selectedHoverBrush;
+            private set
+            {
+                selectedHoverBrush = value;
+                NotifyPropertyChanged(nameof(SelectedHoverBrush));
+            }
+        }
+
         public event PropertyChangedEventHandler PropertyChanged;
 
         public List<string> GetSelectedPaths()
@@ -193,6 +215,8 @@ namespace CopyCopilotReference
             var foreground = ToMediaColor(VSColorTheme.GetThemedColor(EnvironmentColors.ToolWindowTextColorKey));
             var highlight = ToMediaColor(VSColorTheme.GetThemedColor(EnvironmentColors.SystemHighlightColorKey));
             var highlightText = ToMediaColor(VSColorTheme.GetThemedColor(EnvironmentColors.SystemHighlightTextColorKey));
+            var hover = BlendColor(highlight, background, 0.75f);
+            var selectedHover = BlendColor(highlight, background, 0.25f);
 
             Background = new SolidColorBrush(background);
             Foreground = new SolidColorBrush(foreground);
@@ -200,6 +224,8 @@ namespace CopyCopilotReference
             ForegroundBrush = new SolidColorBrush(foreground);
             HighlightBrush = new SolidColorBrush(highlight);
             HighlightTextBrush = new SolidColorBrush(highlightText);
+            HoverBrush = new SolidColorBrush(hover);
+            SelectedHoverBrush = new SolidColorBrush(selectedHover);
             DirectoryBrush = new SolidColorBrush(BlendColor(foreground, background, 0.35f));
         }
 

@@ -132,6 +132,22 @@
                                 <Setter Property="Background" Value="{Binding DataContext.HighlightBrush, RelativeSource={RelativeSource AncestorType=ListBox}}"/>
                                 <Setter Property="Foreground" Value="{Binding DataContext.HighlightTextBrush, RelativeSource={RelativeSource AncestorType=ListBox}}"/>
                             </DataTrigger>
+                            <MultiDataTrigger>
+                                <MultiDataTrigger.Conditions>
+                                    <Condition Binding="{Binding IsMouseOver, RelativeSource={RelativeSource Self}}" Value="True"/>
+                                    <Condition Binding="{Binding IsChecked}" Value="False"/>
+                                </MultiDataTrigger.Conditions>
+                                <Setter Property="Background" Value="{Binding DataContext.HoverBrush, RelativeSource={RelativeSource AncestorType=ListBox}}"/>
+                                <Setter Property="Foreground" Value="{Binding DataContext.ForegroundBrush, RelativeSource={RelativeSource AncestorType=ListBox}}"/>
+                            </MultiDataTrigger>
+                            <MultiDataTrigger>
+                                <MultiDataTrigger.Conditions>
+                                    <Condition Binding="{Binding IsMouseOver, RelativeSource={RelativeSource Self}}" Value="True"/>
+                                    <Condition Binding="{Binding IsChecked}" Value="True"/>
+                                </MultiDataTrigger.Conditions>
+                                <Setter Property="Background" Value="{Binding DataContext.SelectedHoverBrush, RelativeSource={RelativeSource AncestorType=ListBox}}"/>
+                                <Setter Property="Foreground" Value="{Binding DataContext.HighlightTextBrush, RelativeSource={RelativeSource AncestorType=ListBox}}"/>
+                            </MultiDataTrigger>
                         </Style.Triggers>
                     </Style>
                 </ListBox.ItemContainerStyle>
