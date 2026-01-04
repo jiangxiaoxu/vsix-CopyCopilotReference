@@ -20,6 +20,7 @@ namespace CopyCopilotReference
         public const int CommandId = 0x0100;
         public const int AllOpenTabsCommandId = 0x0101;
         public const int SelectedLinesCommandId = 0x0102;
+        public const int SelectedItemsCommandId = 0x0103;
         public static readonly Guid CommandSet = new Guid("e5a7ccbd-56db-4f30-9c9f-01f7c52c1f6a");
         private readonly AsyncPackage package;
 
@@ -32,6 +33,7 @@ namespace CopyCopilotReference
             AddMenuCommand(commandService, CommandId, ExecuteSelected);
             AddMenuCommand(commandService, AllOpenTabsCommandId, ExecuteAllOpenTabs);
             AddMenuCommand(commandService, SelectedLinesCommandId, ExecuteSelectedLines);
+            AddMenuCommand(commandService, SelectedItemsCommandId, ExecuteSelected);
         }
 
         private void AddMenuCommand(OleMenuCommandService commandService, int commandId, EventHandler handler)
@@ -81,6 +83,16 @@ namespace CopyCopilotReference
                 cmd.Enabled = hasSelection;
                 return;
             }
+            else if (cmd.CommandID.ID == SelectedItemsCommandId)
+            {
+                paths = GetSelectedDocumentPaths();
+                cmd.Text = paths.Count <= 1
+                    ? "Copy Copilot Reference"
+                    : string.Format(CultureInfo.CurrentCulture, "Copy Copilot References ({0})", paths.Count);
+                cmd.Visible = paths.Count > 0;
+                cmd.Enabled = paths.Count > 0;
+                return;
+            }
             else
             {
                 paths = GetSelectedDocumentPaths();
@@ -104,7 +116,7 @@ namespace CopyCopilotReference
             }
 
             var text = string.Concat(paths.Select(p => "#file:'" + p + "' "));
-            Clipboard.SetText(text);
+            TrySetClipboardText(text);
         }
 
         private void ExecuteAllOpenTabs(object sender, EventArgs e)
@@ -131,7 +143,7 @@ namespace CopyCopilotReference
             }
 
             var text = string.Concat(selectedPaths.Select(p => "#file:'" + p + "' "));
-            Clipboard.SetText(text);
+            TrySetClipboardText(text);
         }
 
         private void ExecuteSelectedLines(object sender, EventArgs e)
@@ -158,7 +170,7 @@ namespace CopyCopilotReference
                 : ":" + lineStart.ToString(CultureInfo.InvariantCulture) + "-" + lineEnd.ToString(CultureInfo.InvariantCulture);
 
             var text = "#file:'" + fullPath + "'" + lineRange + " ";
-            Clipboard.SetText(text);
+            TrySetClipboardText(text);
         }
 
         private List<string> GetSelectedDocumentPaths()
@@ -545,6 +557,38 @@ namespace CopyCopilotReference
             {
                 return null;
             }
+        }
+
+        private static bool TrySetClipboardText(string text)
+        {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
+            if (string.IsNullOrEmpty(text))
+            {
+                return false;
+            }
+
+            const int maxRetries = 6;
+            const int delayMs = 120;
+            for (var attempt = 0; attempt < maxRetries; attempt++)
+            {
+                try
+                {
+                    Clipboard.SetText(text);
+                    return true;
+                }
+                catch (ExternalException)
+                {
+                    if (attempt == maxRetries - 1)
+                    {
+                        return false;
+                    }
+
+                    global::System.Threading.Thread.Sleep(delayMs);
+                }
+            }
+
+            return false;
         }
 
     }

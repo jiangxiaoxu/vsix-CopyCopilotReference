@@ -23,7 +23,7 @@ This is a Visual Studio extension that converts file paths (and selected line ra
 
 - `Copy Copilot References`
   - 复制当前上下文中的文件路径引用
-
+  - 如果在解决方案资源管理器中多选文件，会复制多选的文件路径
 
 - `Copy Copilot References (All Open Tabs)`
   - 弹出对话框显示当前打开的所有 tab（从左到右）
